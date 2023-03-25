@@ -1,15 +1,20 @@
 <template>
   <div>
     aaa
-    <canvas ref="mainGraph"></canvas>
+    <canvas ref="tempratureGraph"/>
+    <canvas ref="humidityGraph"/>
+    <canvas ref="pressureGraph"/>
   </div>
 </template>
 <script lang="ts" setup>
 import createChart from "./createChart"
+import getData from "./getDataFromText"
 
 import { onMounted, ref } from "vue"
 
-const mainGraph = ref<HTMLCanvasElement>()
+const tempratureGraph = ref<HTMLCanvasElement>()
+const humidityGraph = ref<HTMLCanvasElement>()
+const pressureGraph = ref<HTMLCanvasElement>()
 
 const mainText = `File is openned!
 
@@ -7067,77 +7072,14 @@ timePressure= 167938
 Pressure= 0.07
 `
 
-interface MainData {
-  _data: Array<any>
-}
-
-class MainData {
-  constructor(textData: string){
-    const dataGroupReg = /--------------------------------\ni= \d+\ntimeAccl= \d+\nAccl= \-{0,1}(\d|\.)+,\-{0,1}(\d|\.)+,\-{0,1}(\d|\.)+\ntimeGyro= \d+\nGyro= \-{0,1}(\d|\.)+,\-{0,1}(\d|\.)+,\-{0,1}(\d|\.)+\ntimeMag= \d+\nMag= \-{0,1}\d+,\-{0,1}\d+,\-{0,1}\d+\ntimeTemp= \d+\nTemperature= \-{0,1}(\d|\.)+\ntimeHumidity= \d+\nHumidity= (\d|\.)+\ntimePressure= \d+\nPressure= \-{0,1}(\d|\.)+/g
-    const dataGroups = textData.match(dataGroupReg)
-
-    let newData = []
-
-    dataGroups?.forEach((dataGroup)=>{
-    /*dataGroup
-      --------------------------------
-      i= 485
-      timeAccl= 167926
-      Accl= -1.24,-5.10,8.03
-      timeGyro= 167930
-      Gyro= 2.83,-0.61,0.42
-      timeMag= 167936
-      Mag= 20,65,-144
-      timeTemp= 168240
-      Temperature= 24.99
-      timeHumidity= 168241
-      Humidity= 42.29
-      timePressure= 167938
-      Pressure= 0.07*/      
-      let newDataGroup = {}
-      const dataReg = /\w+= (\d|\.|\-|,)+/g
-      const datas = dataGroup.match(dataReg)
-      datas?.forEach((data)=>{
-      /*data
-        timeTemp= 168240*/
-        const keyReg = /[a-zA-z]+/
-        const keyDatas = data.match(keyReg)
-        const key = keyDatas?keyDatas[0]:"null"
-        const valueReg = /(\d|\.|\-|,)+/
-        const valueDatas = data.match(valueReg)
-        const value = valueDatas?valueDatas[0]:null
-        newDataGroup[key] = value
-      })
-      newData.push(newDataGroup)
-    })
-
-    this._data = newData
-  }
-
-  data(key){
-    let newDatas = []
-    this._data.forEach((dataGroup)=>{
-      newDatas.push(dataGroup[key])
-    })    
-    return newDatas
-  }
-
-  label(key){
-    let newLabels = []
-    this._data.forEach((dataGroup)=>{
-      newLabels.push(dataGroup[key])
-    })    
-    return newLabels
-  }
-}
-
 onMounted(()=>{
-  const showData = new MainData(mainText)
-
-  const mainChart = createChart(mainGraph.value, showData.label("timeTemp"), showData.data("Temperature"))
-
-  if(mainGraph.value != undefined){    
-    
+  const showData = new getData(mainText)
+  if(tempratureGraph.value != undefined && humidityGraph.value != undefined && pressureGraph.value != undefined){
+    createChart(tempratureGraph.value, showData.label("timeTemp"), showData.data("Temperature"))
+    createChart(humidityGraph.value, showData.label("timeHumidity"), showData.data("Humidity"))
+    createChart(pressureGraph.value, showData.label("timePressure"), showData.data("Pressure"))
+  }else{
+    console.error("グラフの要素が足りないよ");
   }
 })
 </script>
