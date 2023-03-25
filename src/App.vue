@@ -5,7 +5,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import Chart from "chart.js/auto"
+import createChart from "./createChart"
 
 import { onMounted, ref } from "vue"
 
@@ -7114,50 +7114,30 @@ class MainData {
     this._data = newData
   }
 
-  data(){
+  data(key){
     let newDatas = []
     this._data.forEach((dataGroup)=>{
-      newDatas.push(dataGroup["Temperature"])
+      newDatas.push(dataGroup[key])
     })    
     return newDatas
   }
 
-  label(){
+  label(key){
     let newLabels = []
     this._data.forEach((dataGroup)=>{
-      newLabels.push(dataGroup["timeTemp"])
+      newLabels.push(dataGroup[key])
     })    
     return newLabels
   }
 }
 
 onMounted(()=>{
-  console.log(mainGraph.value);
-
   const showData = new MainData(mainText)
 
+  const mainChart = createChart(mainGraph.value, showData.label("timeTemp"), showData.data("Temperature"))
+
   if(mainGraph.value != undefined){    
-    new Chart(mainGraph.value, {
-      type: 'line',
-      data: {
-        labels: showData.label(),
-        datasets: [{
-          label: 'たぶん何かのデータ',
-          data: showData.data(),
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          },
-          x: {
-            min: showData.data().length - 100
-          }
-        }
-      }
-    });
+    
   }
 })
 </script>
