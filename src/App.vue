@@ -4,6 +4,9 @@
     <canvas ref="tempratureGraph"/>
     <canvas ref="humidityGraph"/>
     <canvas ref="pressureGraph"/>
+    <canvas ref="acclGraph"/>
+    <canvas ref="gyroGraph"/>
+    <canvas ref="magGraph"/>
   </div>
 </template>
 <script lang="ts" setup>
@@ -15,6 +18,9 @@ import { onMounted, ref } from "vue"
 const tempratureGraph = ref<HTMLCanvasElement>()
 const humidityGraph = ref<HTMLCanvasElement>()
 const pressureGraph = ref<HTMLCanvasElement>()
+const acclGraph = ref<HTMLCanvasElement>()
+const gyroGraph = ref<HTMLCanvasElement>()
+const magGraph = ref<HTMLCanvasElement>()
 
 const mainText = `File is openned!
 
@@ -7074,12 +7080,11 @@ Pressure= 0.07
 
 onMounted(()=>{
   const showData = new getData(mainText)
-  if(tempratureGraph.value != undefined && humidityGraph.value != undefined && pressureGraph.value != undefined){
-    createChart(tempratureGraph.value, showData.label("timeTemp"), showData.data("Temperature"))
-    createChart(humidityGraph.value, showData.label("timeHumidity"), showData.data("Humidity"))
-    createChart(pressureGraph.value, showData.label("timePressure"), showData.data("Pressure"))
-  }else{
-    console.error("グラフの要素が足りないよ");
-  }
+  createChart("温度", tempratureGraph.value, showData.label("timeTemp"), showData.data("Temperature"))
+  createChart("湿度", humidityGraph.value, showData.label("timeHumidity"), showData.data("Humidity"))
+  createChart("圧力", pressureGraph.value, showData.label("timePressure"), showData.data("Pressure"))
+  createChart("???", acclGraph.value, showData.label("timeAccl"), showData.data("Accl"), true)
+  createChart("ジャイロ", gyroGraph.value, showData.label("timeGyro"), showData.data("Gyro"), true)
+  createChart("???", magGraph.value, showData.label("timeMag"), showData.data("Mag"), true)
 })
 </script>
