@@ -1,5 +1,7 @@
 import Chart from "chart.js/auto"
 
+const labelColor = "rgb(255 255 255 / 0.4)"
+
 export default (title: string, canvas: HTMLCanvasElement|undefined, labels: Array<string>, data: Array<string>, isThreeAxisData?: boolean)=>{
   if(canvas != undefined){
     let xDatas: Array<string> = []
@@ -45,17 +47,26 @@ export default (title: string, canvas: HTMLCanvasElement|undefined, labels: Arra
         datasets: chartData
       },
       options: {
+        color: "white",
+        maintainAspectRatio: false,
         plugins: {
           title: {
             display: true,
-            text: title
+            text: title,
+            color: "white"
           }
         },
         scales: {
           y: {
+            ticks: {
+              color: labelColor
+            },
             beginAtZero: true
           },
           x: {
+            ticks: {
+              color: labelColor
+            },
             min: data.length - 100
           }
         }

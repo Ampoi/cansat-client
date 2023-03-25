@@ -1,12 +1,12 @@
 <template>
-  <div>
-    aaa
-    <canvas ref="tempratureGraph"/>
-    <canvas ref="humidityGraph"/>
-    <canvas ref="pressureGraph"/>
-    <canvas ref="acclGraph"/>
-    <canvas ref="gyroGraph"/>
-    <canvas ref="magGraph"/>
+  <div class="grid grid-cols-2 grid-rows-3 gap-4 p-4 w-screen h-screen bg-slate-900">
+    <div
+      v-for="chart in charts"
+      :key="chart.key"
+      class="bg-slate-600/20 p-4 rounded-md"
+    >
+      <canvas :ref="chart"/>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -14,6 +14,8 @@ import createChart from "./createChart"
 import getData from "./getDataFromText"
 
 import { onMounted, ref } from "vue"
+
+const charts: Array<any> = ["tempratureGraph", "humidityGraph", "pressureGraph", "acclGraph", "gyroGraph", "magGraph"]
 
 const tempratureGraph = ref<HTMLCanvasElement>()
 const humidityGraph = ref<HTMLCanvasElement>()
@@ -7083,8 +7085,8 @@ onMounted(()=>{
   createChart("温度", tempratureGraph.value, showData.label("timeTemp"), showData.data("Temperature"))
   createChart("湿度", humidityGraph.value, showData.label("timeHumidity"), showData.data("Humidity"))
   createChart("圧力", pressureGraph.value, showData.label("timePressure"), showData.data("Pressure"))
-  createChart("???", acclGraph.value, showData.label("timeAccl"), showData.data("Accl"), true)
+  createChart("加速度", acclGraph.value, showData.label("timeAccl"), showData.data("Accl"), true)
   createChart("ジャイロ", gyroGraph.value, showData.label("timeGyro"), showData.data("Gyro"), true)
-  createChart("???", magGraph.value, showData.label("timeMag"), showData.data("Mag"), true)
+  createChart("地磁気", magGraph.value, showData.label("timeMag"), showData.data("Mag"), true)
 })
 </script>
