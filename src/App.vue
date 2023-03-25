@@ -7068,8 +7068,7 @@ Pressure= 0.07
 `
 
 interface MainData {
-  _data: Array<any>,
-  _label: Array<Number>
+  _data: Array<any>
 }
 
 class MainData {
@@ -7078,13 +7077,29 @@ class MainData {
     const dataGroups = textData.match(dataGroupReg)
 
     let newData = []
-    let newLabel = []
 
     dataGroups?.forEach((dataGroup)=>{
+    /*dataGroup
+      --------------------------------
+      i= 485
+      timeAccl= 167926
+      Accl= -1.24,-5.10,8.03
+      timeGyro= 167930
+      Gyro= 2.83,-0.61,0.42
+      timeMag= 167936
+      Mag= 20,65,-144
+      timeTemp= 168240
+      Temperature= 24.99
+      timeHumidity= 168241
+      Humidity= 42.29
+      timePressure= 167938
+      Pressure= 0.07*/      
       let newDataGroup = {}
       const dataReg = /\w+= (\d|\.|\-|,)+/g
       const datas = dataGroup.match(dataReg)
       datas?.forEach((data)=>{
+      /*data
+        timeTemp= 168240*/
         const keyReg = /[a-zA-z]+/
         const keyDatas = data.match(keyReg)
         const key = keyDatas?keyDatas[0]:"null"
@@ -7093,15 +7108,27 @@ class MainData {
         const value = valueDatas?valueDatas[0]:null
         newDataGroup[key] = value
       })
-      newData.push(newDataGroup.Humidity)
-      newLabel.push(newDataGroup.timeHumidity)
+      newData.push(newDataGroup)
     })
 
     this._data = newData
-    this._label = newLabel
   }
-  get data(){ return this._data }
-  get label(){ return this._label }
+
+  data(){
+    let newDatas = []
+    this._data.forEach((dataGroup)=>{
+      newDatas.push(dataGroup["Temperature"])
+    })    
+    return newDatas
+  }
+
+  label(){
+    let newLabels = []
+    this._data.forEach((dataGroup)=>{
+      newLabels.push(dataGroup["timeTemp"])
+    })    
+    return newLabels
+  }
 }
 
 onMounted(()=>{
@@ -7113,10 +7140,10 @@ onMounted(()=>{
     new Chart(mainGraph.value, {
       type: 'line',
       data: {
-        labels: showData.label,
+        labels: showData.label(),
         datasets: [{
           label: 'たぶん何かのデータ',
-          data: showData.data,
+          data: showData.data(),
           borderWidth: 1
         }]
       },
@@ -7124,6 +7151,9 @@ onMounted(()=>{
         scales: {
           y: {
             beginAtZero: true
+          },
+          x: {
+            min: showData.data().length - 100
           }
         }
       }
