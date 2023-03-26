@@ -1,14 +1,30 @@
 <template>
-  <div class="grid grid-cols-2 grid-rows-3 gap-4 p-4 w-screen h-screen bg-slate-900">
-    <div
-      v-for="chart in charts"
-      :key="chart.key"
-      class="bg-slate-600/20 p-4 rounded-md"
-    >
-      <canvas :ref="chart"/>
+  <div class="bg-slate-900 px-4 py-8 flex flex-col gap-8 overflow-y-auto overflow-x-hidden">
+    <div class="text-white font-[Share_Tech_Mono] flex flex-col gap-4 items-center">
+      <canvas ref="rocketModel" width="300" height="300" class="border-2 border-white mx-auto"/>
+      <div class="text-2xl flex flex-row gap-12 justify-center">
+        <p>Temperature: {{ showData.data("Temperature").slice(-1)[0] }}</p>
+        <p>Humidity: {{ showData.data("Humidity").slice(-1)[0] }}</p>
+        <p>Pressure: {{ showData.data("Pressure").slice(-1)[0] }}</p>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 grid-rows-3 gap-4 w-full h-screen">
+      <div
+        v-for="chart in charts"
+        :key="chart.key"
+        class="bg-slate-600/20 p-4 rounded-md"
+      >
+        <canvas :ref="chart"/>
+      </div>
     </div>
   </div>
 </template>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+  body {
+    font-family: 'Share Tech Mono';
+  }
+</style>
 <script lang="ts" setup>
 import createChart from "./createChart"
 import getData from "./getDataFromText"
@@ -7101,9 +7117,16 @@ timePressure= 167938
 Pressure= 0.07
 `
 
+const showData = new getData(mainText)
+const defaultPressure = getDefaultPressure(mainText)
+
+const rocketModel = ref<HTMLCanvasElement>()
+
 onMounted(()=>{
-  const showData = new getData(mainText)
-  const defaultPressure = getDefaultPressure(mainText)
+  if(rocketModel.value != undefined){
+    
+  }
+
   createChart("温度", tempratureGraph.value, showData.label("timeTemp"), showData.data("Temperature"))
   createChart("湿度", humidityGraph.value, showData.label("timeHumidity"), showData.data("Humidity"))
   createChart("気圧", pressureGraph.value, showData.label("timePressure"), showData.data("Pressure"), false, defaultPressure)
