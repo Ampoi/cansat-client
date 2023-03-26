@@ -7188,6 +7188,12 @@ onMounted(()=>{
     zAxis.rotation.set(1/2*Math.PI, 0, 0)
     scene.add(zAxis)
 
+    const sphere = new THREE.Mesh(
+      new THREE.SphereGeometry(0.1, 20, 20),
+      new THREE.MeshBasicMaterial({color: 0xFFFFFF})
+    )
+    scene.add(sphere)
+
     const loader = new STLLoader();
     loader.load("rocket.stl", (object)=>{
       const rocketMaterial = new THREE.MeshBasicMaterial({
@@ -7199,11 +7205,20 @@ onMounted(()=>{
       
       tick()
       function tick(){
-        const threeAxisDataArray = showData.data("Gyro").slice(-1)[0].split(",")
-        rocket.rotation.x = Number((threeAxisDataArray[0] - 90)*Math.PI/180)
-        rocket.rotation.y = Number(threeAxisDataArray[1]*Math.PI/180)
-        rocket.rotation.z = Number(threeAxisDataArray[2]*Math.PI/180)
-        
+        const threeRocketGyroArray = showData.data("Gyro").slice(-1)[0].split(",")
+        rocket.rotation.set(
+          (threeRocketGyroArray[0] - 90)*Math.PI/180,
+          threeRocketGyroArray[1]*Math.PI/180,
+          threeRocketGyroArray[2]*Math.PI/180
+        )
+
+        const threeRocketAcclArray = showData.data("Gyro").slice(-1)[0].split(",")
+        sphere.position.set(
+          threeRocketAcclArray[0],
+          threeRocketAcclArray[1],
+          threeRocketAcclArray[2]
+        )
+
         renderer.render(scene, camera);
         requestAnimationFrame(tick);
       }
