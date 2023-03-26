@@ -20,16 +20,22 @@ export default (title: string, canvas: HTMLCanvasElement|undefined, labels: Arra
         {
           data: xDatas,
           borderWidth: 1,
+          //borderColor: "#FF0000",
+          borderColor: "#4BC0C0",
           label: "x"
         },
         {
           data: yDatas,
           borderWidth: 1,
+          //borderColor: "#00FF00",
+          borderColor: "#9966FF",
           label: "y"
         },
         {
           data: zDatas,
           borderWidth: 1,
+          //borderColor: "#0000FF",
+          borderColor: "#37A2EB",
           label: "z"
         }
       ]

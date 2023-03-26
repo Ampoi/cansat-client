@@ -1,7 +1,7 @@
 <template>
   <div class="bg-slate-900 px-4 py-8 flex flex-col gap-8 overflow-y-auto overflow-x-hidden">
     <div class="text-white font-[Share_Tech_Mono] flex flex-col gap-4 items-center">
-      <canvas ref="rocketModel" class="mx-auto"/>
+      <canvas ref="rocketModel" class="mx-auto border-blue-600/40 border-2 rounded-full"/>
       <div class="text-2xl flex flex-row gap-12 justify-center">
         <p>Temperature: {{ showData.data("Temperature").slice(-1)[0] }}</p>
         <p>Humidity: {{ showData.data("Humidity").slice(-1)[0] }}</p>
@@ -12,7 +12,7 @@
       <div
         v-for="chart in charts"
         :key="chart.key"
-        class="bg-slate-600/20 p-4 rounded-md"
+        class="border-blue-600/40 border-2 p-4 rounded-md"
       >
         <canvas :ref="chart"/>
       </div>
@@ -7137,16 +7137,17 @@ onMounted(()=>{
     scene.background = new THREE.Color(0x0F1629)
 
     const camera = new THREE.PerspectiveCamera(45, 1)
-    const distance = 3000
+    const distance = 30
     camera.position.set(-Math.sin(1/4)*distance, Math.sin(1/4)*distance, Math.sin(1/4)*distance)
     //camera.position.set(0, 0, 1000)
     camera.lookAt(new THREE.Vector3(0,0,0))
 
-    const axesHelper = new THREE.AxesHelper(400)
+    const axesHelper = new THREE.AxesHelper(4)
+    axesHelper.setColors(0x4BC0C0, 0x9966FF, 0x37A2EB)
     scene.add(axesHelper)
     
-    const gridHelper = new THREE.GridHelper(1000)
-    scene.add(gridHelper)
+//    const gridHelper = new THREE.GridHelper(1000)
+//    scene.add(gridHelper)
 
     const loader = new STLLoader();
     loader.load("rocket.stl", (object)=>{
@@ -7155,7 +7156,6 @@ onMounted(()=>{
         wireframe: true
       });
       const rocket = new THREE.Mesh(object, rocketMaterial)
-      rocket.scale.set(100, 100, 100)
       scene.add(rocket)
       
       tick()
