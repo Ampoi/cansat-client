@@ -1,11 +1,34 @@
 <template>
   <div class="bg-slate-900 px-4 py-8 flex flex-col gap-8 overflow-y-auto overflow-x-hidden">
-    <div class="text-white font-[Share_Tech_Mono] flex flex-col gap-4 items-center">
-      <canvas ref="rocketModel" class="mx-auto border-blue-600/40 border-2 rounded-full"/>
-      <div class="text-2xl flex flex-row gap-12 justify-center">
-        <p>Temperature: {{ showData.data("Temperature").slice(-1)[0] }}</p>
-        <p>Humidity: {{ showData.data("Humidity").slice(-1)[0] }}</p>
-        <p>Pressure: {{ showData.data("Pressure").slice(-1)[0] }}</p>
+    <div class="text-white font-[Share_Tech_Mono] flex flex-row gap-4 items-center justify-center">
+      <div class="text-right flex flex-col gap-4 justify-center items-end">
+        <p>
+          <span class="text-md">Temperature:</span><br>
+          <h2 class="text-3xl">{{ showData.data("Temperature").slice(-1)[0] }}</h2>
+        </p>
+        <p>
+          <span class="text-md">Pressure:</span><br>
+          <h2 class="text-3xl">{{ showData.data("Pressure").slice(-1)[0] }}</h2>
+        </p>
+        <p>
+          <span class="text-md">Gyro:</span><br>
+          <h2 class="text-3xl">{{ showData.data("Gyro").slice(-1)[0] }}</h2>
+        </p>
+      </div>
+      <canvas ref="rocketModel" class="border-blue-600/40 border-2 rounded-full"/>
+      <div class="text-left flex flex-col gap-4 justify-center items-start">
+        <p>
+          <span class="text-md">Humidity:</span><br>
+          <h2 class="text-3xl">{{ showData.data("Humidity").slice(-1)[0] }}</h2>
+        </p>
+        <p>
+          <span class="text-md">Accl:</span><br>
+          <h2 class="text-3xl">{{ showData.data("Accl").slice(-1)[0] }}</h2>
+        </p>
+        <p>
+          <span class="text-md">Mag:</span><br>
+          <h2 class="text-3xl">{{ showData.data("Mag").slice(-1)[0] }}</h2>
+        </p>
       </div>
     </div>
     <div class="grid grid-cols-2 grid-rows-3 gap-4 w-full h-screen">
@@ -7142,12 +7165,28 @@ onMounted(()=>{
     //camera.position.set(0, 0, 1000)
     camera.lookAt(new THREE.Vector3(0,0,0))
 
-    const axesHelper = new THREE.AxesHelper(4)
-    axesHelper.setColors(0x4BC0C0, 0x9966FF, 0x37A2EB)
-    scene.add(axesHelper)
-    
-//    const gridHelper = new THREE.GridHelper(1000)
-//    scene.add(gridHelper)
+    const xAxis = new THREE.Mesh(                                     
+      new THREE.CylinderGeometry(0.04,0.04,4,20),                         
+      new THREE.MeshBasicMaterial({color: 0x4BC0C0})
+    );
+    xAxis.position.set(2, 0, 0)
+    xAxis.rotation.set(0, 0, 1/2*Math.PI)
+    scene.add(xAxis)
+
+    const yAxis = new THREE.Mesh(                                     
+      new THREE.CylinderGeometry(0.04,0.04,4,20),                         
+      new THREE.MeshBasicMaterial({color: 0x9966FF})
+    );
+    yAxis.position.set(0, 2, 0)
+    scene.add(yAxis)
+
+    const zAxis = new THREE.Mesh(                                     
+      new THREE.CylinderGeometry(0.04,0.04,4,20),                         
+      new THREE.MeshBasicMaterial({color: 0x37A2EB})
+    );
+    zAxis.position.set(0, 0, 2)
+    zAxis.rotation.set(1/2*Math.PI, 0, 0)
+    scene.add(zAxis)
 
     const loader = new STLLoader();
     loader.load("rocket.stl", (object)=>{
