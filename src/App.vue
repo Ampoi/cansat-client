@@ -27,6 +27,7 @@
 </style>
 <script lang="ts" setup>
 import * as THREE from "three";
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js"
 
 import createChart from "./createChart"
 import getData from "./getDataFromText"
@@ -7136,26 +7137,38 @@ onMounted(()=>{
     scene.background = new THREE.Color(0x0F1629)
 
     const camera = new THREE.PerspectiveCamera(45, 1)
-    camera.position.set(0, 0, +1000)
+    const distance = 3000
+    camera.position.set(-Math.sin(1/4)*distance, Math.sin(1/4)*distance, Math.sin(1/4)*distance)
+    //camera.position.set(0, 0, 1000)
+    camera.lookAt(new THREE.Vector3(0,0,0))
 
-    const boxGeometry = new THREE.BoxGeometry(100, 400, 100);
-    const boxMaterial = new THREE.MeshNormalMaterial();
-    boxMaterial.wireframe = true
-    const box = new THREE.Mesh(boxGeometry, boxMaterial);
-    scene.add(box);
+    const axesHelper = new THREE.AxesHelper(400)
+    scene.add(axesHelper)
+    
+    const gridHelper = new THREE.GridHelper(1000)
+    scene.add(gridHelper)
 
-    tick()
-
-    function tick(){
-      const threeAxisDataArray = showData.data("Gyro").slice(-1)[0].split(",")
-      box.rotation.x = Number(threeAxisDataArray[0])
-      box.rotation.y = Number(threeAxisDataArray[1])
-      box.rotation.z = Number(threeAxisDataArray[2])
-
-      renderer.render(scene, camera);
-
-      requestAnimationFrame(tick);
-    }
+    const loader = new STLLoader();
+    loader.load("rocket.stl", (object)=>{
+      const rocketMaterial = new THREE.MeshBasicMaterial({
+        color: 0xFFFFFF,
+        wireframe: true
+      });
+      const rocket = new THREE.Mesh(object, rocketMaterial)
+      rocket.scale.set(100, 100, 100)
+      scene.add(rocket)
+      
+      tick()
+      function tick(){
+        const threeAxisDataArray = showData.data("Gyro").slice(-1)[0].split(",")
+        rocket.rotation.x = Number((threeAxisDataArray[0] - 90)*Math.PI/180)
+        rocket.rotation.y = Number(threeAxisDataArray[1]*Math.PI/180)
+        rocket.rotation.z = Number(threeAxisDataArray[2]*Math.PI/180)
+        
+        renderer.render(scene, camera);
+        requestAnimationFrame(tick);
+      }
+    })
   }
 
   createChart("温度", tempratureGraph.value, showData.label("timeTemp"), showData.data("Temperature"))
