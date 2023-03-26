@@ -24,6 +24,27 @@ const acclGraph = ref<HTMLCanvasElement>()
 const gyroGraph = ref<HTMLCanvasElement>()
 const magGraph = ref<HTMLCanvasElement>()
 
+function getDefaultPressure(text: string){
+  const defaultPressureReg = /ReferencePressure= [0-9.]+/g
+  const defaultPressureCol = text.match(defaultPressureReg)
+  if(defaultPressureCol != null){
+    const newDefaultPressure = defaultPressureCol[0]
+    const pressureDataReg = /[0-9.]+/
+    
+    const pressureData = newDefaultPressure.match(pressureDataReg)
+    if(pressureData != null){
+      return Number(pressureData[0])
+    }else{
+      console.error("初期の気圧のデータが見つかりません!!!");
+      return 0
+    }
+    
+  }else{
+    console.error("初期の気圧の行が見つかりません!!!");
+    return 0
+  }
+}
+
 const mainText = `File is openned!
 
 
@@ -7082,9 +7103,10 @@ Pressure= 0.07
 
 onMounted(()=>{
   const showData = new getData(mainText)
+  const defaultPressure = getDefaultPressure(mainText)
   createChart("温度", tempratureGraph.value, showData.label("timeTemp"), showData.data("Temperature"))
   createChart("湿度", humidityGraph.value, showData.label("timeHumidity"), showData.data("Humidity"))
-  createChart("圧力", pressureGraph.value, showData.label("timePressure"), showData.data("Pressure"))
+  createChart("気圧", pressureGraph.value, showData.label("timePressure"), showData.data("Pressure"), false, defaultPressure)
   createChart("加速度", acclGraph.value, showData.label("timeAccl"), showData.data("Accl"), true)
   createChart("ジャイロ", gyroGraph.value, showData.label("timeGyro"), showData.data("Gyro"), true)
   createChart("地磁気", magGraph.value, showData.label("timeMag"), showData.data("Mag"), true)
