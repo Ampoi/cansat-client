@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "chart.js": "^4.2.1",
+    "three": "^0.150.1",
     "vue": "^3.2.47"
   },
   "devDependencies": {

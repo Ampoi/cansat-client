@@ -39,7 +39,6 @@ export default (title: string, canvas: HTMLCanvasElement|undefined, labels: Arra
         data.forEach((value)=>{
           newData.push(Number(value) + defaultPressure)
         })
-        console.log(newData)
         chartData = [{
           data: newData,
           borderWidth: 1,

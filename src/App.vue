@@ -1,7 +1,7 @@
 <template>
   <div class="bg-slate-900 px-4 py-8 flex flex-col gap-8 overflow-y-auto overflow-x-hidden">
     <div class="text-white font-[Share_Tech_Mono] flex flex-col gap-4 items-center">
-      <canvas ref="rocketModel" width="300" height="300" class="border-2 border-white mx-auto"/>
+      <canvas ref="rocketModel" class="mx-auto"/>
       <div class="text-2xl flex flex-row gap-12 justify-center">
         <p>Temperature: {{ showData.data("Temperature").slice(-1)[0] }}</p>
         <p>Humidity: {{ showData.data("Humidity").slice(-1)[0] }}</p>
@@ -26,6 +26,8 @@
   }
 </style>
 <script lang="ts" setup>
+import * as THREE from "three";
+
 import createChart from "./createChart"
 import getData from "./getDataFromText"
 
@@ -7124,7 +7126,36 @@ const rocketModel = ref<HTMLCanvasElement>()
 
 onMounted(()=>{
   if(rocketModel.value != undefined){
-    
+    const renderer = new THREE.WebGLRenderer({
+      canvas: rocketModel.value
+    })
+    renderer.setPixelRatio(window.devicePixelRatio)
+    renderer.setSize("300", "300")
+
+    const scene =  new THREE.Scene()
+    scene.background = new THREE.Color(0x0F1629)
+
+    const camera = new THREE.PerspectiveCamera(45, 1)
+    camera.position.set(0, 0, +1000)
+
+    const boxGeometry = new THREE.BoxGeometry(100, 400, 100);
+    const boxMaterial = new THREE.MeshNormalMaterial();
+    boxMaterial.wireframe = true
+    const box = new THREE.Mesh(boxGeometry, boxMaterial);
+    scene.add(box);
+
+    tick()
+
+    function tick(){
+      const threeAxisDataArray = showData.data("Gyro").slice(-1)[0].split(",")
+      box.rotation.x = Number(threeAxisDataArray[0])
+      box.rotation.y = Number(threeAxisDataArray[1])
+      box.rotation.z = Number(threeAxisDataArray[2])
+
+      renderer.render(scene, camera);
+
+      requestAnimationFrame(tick);
+    }
   }
 
   createChart("温度", tempratureGraph.value, showData.label("timeTemp"), showData.data("Temperature"))
